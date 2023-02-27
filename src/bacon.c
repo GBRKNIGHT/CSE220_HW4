@@ -73,10 +73,7 @@ int zero_lower_one_upper(char test_char){
     else if((test_char >= 97) && (test_char < 123)){
         return 0;
     }
-    else{
-
-    }
-    return -999; 
+    return (-999); 
 }
 
 
@@ -120,6 +117,38 @@ int* char_str_to_bacon_int_str(char* input_char_str){
 }
 
 
+char* auto_change_case(char* cipher_text, unsigned int* plain_int){
+    int cipher_length = strlen(cipher_text);
+    int plain_pointer = 0;
+    for(int cipher_pointer = 0; i < cipher_length; i++){
+        if(zero_lower_one_upper(cipher_text[cipher_pointer]) == -999){
+            // if is not a valid character to be encrypted.
+            i++;
+            // skip the current char. 
+        }
+        if(zero_lower_one_upper(cipher_text[cipher_pointer]) == 0){
+            // if the cipher text this char is lower case 
+            if(plain_int[plain_pointer] == 0x1){
+                // if the plain is 1
+                cipher_text[cipher_pointer] = cipher_text[cipher_pointer] - 32; 
+                // change to upper case. 
+            }
+        }
+        if(zero_lower_one_upper(cipher_text[cipher_pointer]) == 1){
+            // if the cipher text this char is upper case 
+            if(plain_int[plain_pointer] == 0x0){
+                // if the plain is 0
+                cipher_text[cipher_pointer] = cipher_text[cipher_pointer] + 32; 
+                // change to lower case. 
+            }
+        }
+        j++;
+    }
+    // Unsolved question: how to find if it has loss some info here?
+    // in the encrypt step? Doable/ !!!!! Remember to do this. 
+    return cipher_text;
+}
+
 int encrypt(const char *plaintext, char *ciphertext) {
     int length_of_cipher = strlen(ciphertext);
     int length_of_plain = strlen(plaintext);
@@ -129,7 +158,8 @@ int encrypt(const char *plaintext, char *ciphertext) {
     // if not overflow
     if (length_of_plain <= length_of_cipher)
     {
-        return -1000;
+        ciphertext = auto_change_case(ciphertext, plain_int_bacon);
+        return 0; // need to change here
     }
     // if overflow
     else{
