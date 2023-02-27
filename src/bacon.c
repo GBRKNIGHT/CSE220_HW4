@@ -92,9 +92,22 @@ int zero_lower_one_upper(char test_char){
     return (-999); 
 }
 
+// This meant to change the lower case in the plain text to upper case,
+// because lower case English chars cannot be directly encoded.
+int upper_to_lower(char* input_char_str){
+    int length = strlen(input_char_str);
+    for(int i = 0; i < length; i++){
+        if((input_char_str[i] >= 97) && (input_char_str[i] < 123)){
+            input_char_str[i] -= 32;
+        }  
+    }
+    return 0;
+}
 
 //change a char string to int str
+//NEED TO CHANGE UPPER TO LOWER
 unsigned int* char_str_to_bacon_int_str(char* input_char_str){
+    upper_to_lower(input_char_str);
     int length_char_str = strlen(input_char_str);
     unsigned int *int_str_binary [6 * (length_char_str)];
     // data fields to get binary
