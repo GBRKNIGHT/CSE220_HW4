@@ -13,7 +13,9 @@ int char_to_ascii (char input_char){
     return input_char;
 }
 
-
+char ascii_to_char (int input_ascii_int){
+    return (char)input_ascii_int;
+}
 
 unsigned int askii_to_bacon(int ascii_from_above){
     unsigned int result = 0;
@@ -56,6 +58,34 @@ unsigned int askii_to_bacon(int ascii_from_above){
 }
 
 
+// This is the reverse of the function above. 
+int bacon_to_ascii(int bacon_code){
+    int result = -999;
+    if ((bacon_code >= 0)&& bacon_code < 26)
+    {
+        result = bacon_code + 65;
+    }
+    else if ((bacon_code>= 26) && (bacon_code < 40)){
+        bacon_code -= 26;
+        result = bacon_code + 32;
+    }
+    else if((bacon_code >= 40) && (bacon_code < 50)){
+        bacon_code -= 40;
+        result = bacon_code + 48;
+    }
+    else if((bacon_code >= 50) && (bacon_code < 52)){
+        bacon_code -= 50;
+        result = bacon_code + 58; 
+    }
+    else if(bacon_code == 52){
+        result = 63;
+    }else{
+        result = -999;
+    }
+    return result;
+}
+
+
 int is_english_char (char input_char) {
     // 0 if not english char, else 1
     int ascii_from_above = (int) input_char;
@@ -79,6 +109,13 @@ unsigned int get_bacon_code(char input_char){
     return bacon;
 }
 
+
+// use 2 reverse function above to get the char from the bacon code. 
+char get_char_from_bacon(int bacon_code){
+    int ascii_code = bacon_to_ascii(bacon_code);
+    char result_char = ascii_to_char(ascii_code);
+    return result_char;
+}
 
 // use to find out if a character is upper or lower case
 int zero_lower_one_upper(char test_char){
@@ -179,7 +216,7 @@ char* auto_change_case(char* cipher_text, unsigned int* plain_int){
 
 // count the num of unusable chars in the cipher text string. 
 int count_unusable_char(char* char_string){
-    int length = strlen(char_string);
+    int length = strlen((char*)char_string);
     int result = 0;
     for(int i = 0; i < length; i++){
         if(is_english_char(char_string[i] == 0)){
@@ -212,6 +249,59 @@ int encrypt(const char *plaintext, char *ciphertext) {
     }
 }
 
-// int decrypt(const char *ciphertext, char *plaintext) {
-//      return -1000;
-// }
+
+// read cipher text, and store them by finding upper or lower case. 
+int* read_cipher_text(char *cipher_text){
+    int length_original = strlen(cipher_text);
+    int *int_original[length_original];
+    for(int i = 0; i < length_original; i++){
+        *int_original[i] = zero_lower_one_upper(cipher_text[i]);
+    }
+    int unusable_chars = count_unusable_char(cipher_text);
+    int new_length = length_original - unusable_chars;
+    int *int_deleted[new_length];
+    int j = 0; // original
+    for(int i = 0; i < new_length; i++){
+        if(*int_original[j] == (-999)){
+            j++;
+            continue;
+        }
+        int_deleted[i] = int_original[j];
+        j++;
+    }
+    return *int_deleted;
+}
+
+
+
+int decrypt(const char *ciphertext, char *plaintext) {
+    int* cipher_int = read_cipher_text((char*)ciphertext);
+    int cipher_length = strlen(ciphertext) - count_unusable_char((char*)ciphertext);
+    int not_six = cipher_length % 6;
+    cipher_length -= not_six;
+    int result_counter = 0;
+    int *decimal_results [cipher_length / 6];
+    for(int i = 0; i < cipher_length; i = i+6){
+        int start_from = i;
+        *decimal_results[result_counter] = cipher_int[start_from] * (2*2*2*2*2);
+        *decimal_results[result_counter] += cipher_int[start_from + 1] * (2*2*2*2);
+        *decimal_results[result_counter] += cipher_int[start_from + 2] * (2*2*2);
+        *decimal_results[result_counter] += cipher_int[start_from + 3] * (2*2);
+        *decimal_results[result_counter] += cipher_int[start_from + 4] * (2);
+        *decimal_results[result_counter] += cipher_int[start_from + 5] * (1);
+        result_counter ++;
+        if(i + 6 > cipher_length){
+            break;
+        }
+    }
+    int plain_length = cipher_length / 6;
+    char* result = plaintext;
+    for(int i = 0; i < plain_length; i++){
+        result[i] = (int)get_char_from_bacon(*decimal_results[i]);
+    }
+    plaintext = result;
+    return -1000;
+}
+
+
+
