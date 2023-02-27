@@ -1,7 +1,7 @@
 #include "bacon.h"
 #include <stdio.h>
 #include <stdlib.h>
-typedef enum {false,true}bool;
+
 
 
 // Add other #includes here if you> want.
@@ -56,6 +56,22 @@ unsigned int askii_to_bacon(int ascii_from_above){
 }
 
 
+int is_english_char (char input_char) {
+    // 0 if not english char, else 1
+    int ascii_from_above = (int) input_char;
+    if ((ascii_from_above >= 65) && (ascii_from_above < 91))
+    {
+        return 1;
+    }
+    else if((ascii_from_above >= 97) && (ascii_from_above < 123))
+    {
+        return 1;
+    }
+    else{
+        return 0;
+    }    
+}
+
 // use 2 functions above to get the bacon code
 unsigned int get_bacon_code(char input_char){
     unsigned int askii = char_to_ascii(input_char);
@@ -78,15 +94,15 @@ int zero_lower_one_upper(char test_char){
 
 
 //change a char string to int str
-int* char_str_to_bacon_int_str(char* input_char_str){
+unsigned int* char_str_to_bacon_int_str(char* input_char_str){
     int length_char_str = strlen(input_char_str);
-    int *int_str_binary [6 * length_char_str];
+    unsigned int *int_str_binary [6 * (length_char_str)];
     // data fields to get binary
     unsigned int dividend = 0;
-    unsigned int divisor = 2;
+    // unsigned int divisor = 2;
     int pointer_at_int_str_bi = 0;
     for(int i = 0; i < length_char_str; i++){
-        unsigned int bacon_code = get_bacon_code(int_str_binary[i]);
+        unsigned int bacon_code = get_bacon_code(*int_str_binary[i]);
         // the transformed array from decimal to binary will be in a reverse sequence. 
         unsigned int *current_char_binary_reverse[6];
         dividend = bacon_code;
@@ -94,14 +110,14 @@ int* char_str_to_bacon_int_str(char* input_char_str){
             int j = 0;
             if (dividend % 2 == 1)
             {
-                current_char_binary_reverse[j] == 0x1;
+                *current_char_binary_reverse[j] = (unsigned int)0x1;
             }
             bacon_code = bacon_code/2;
             j++;
         }
         unsigned int *current_char_binary[6];
         //reverse the generated binary int array
-        for(int k = 0; k < strlen(current_char_binary); k++){
+        for(int k = 0; k < 6; k++){
             int l = 5;
             current_char_binary[k] = current_char_binary_reverse[l];
             l--;
@@ -113,17 +129,17 @@ int* char_str_to_bacon_int_str(char* input_char_str){
         }
         dividend = 0;
     }
-    return int_str_binary;
+    return *int_str_binary;
 }
 
 
 char* auto_change_case(char* cipher_text, unsigned int* plain_int){
     int cipher_length = strlen(cipher_text);
     int plain_pointer = 0;
-    for(int cipher_pointer = 0; i < cipher_length; i++){
+    for(int cipher_pointer = 0; cipher_pointer < cipher_length; cipher_pointer++){
         if(zero_lower_one_upper(cipher_text[cipher_pointer]) == -999){
             // if is not a valid character to be encrypted.
-            i++;
+            cipher_pointer++;
             // skip the current char. 
         }
         if(zero_lower_one_upper(cipher_text[cipher_pointer]) == 0){
@@ -142,33 +158,47 @@ char* auto_change_case(char* cipher_text, unsigned int* plain_int){
                 // change to lower case. 
             }
         }
-        j++;
+        plain_pointer++;
     }
-    // Unsolved question: how to find if it has loss some info here?
-    // in the encrypt step? Doable/ !!!!! Remember to do this. 
     return cipher_text;
 }
 
+
+// count the num of unusable chars in the cipher text string. 
+int count_unusable_char(char* char_string){
+    int length = strlen(char_string);
+    int result = 0;
+    for(int i = 0; i < length; i++){
+        if(is_english_char(char_string[i] == 0)){
+            result++;
+        }
+    }
+    return result;
+}
+
+
 int encrypt(const char *plaintext, char *ciphertext) {
     int length_of_cipher = strlen(ciphertext);
+    int unusable_chars = count_unusable_char(ciphertext);
     int length_of_plain = strlen(plaintext);
+    length_of_cipher -= unusable_chars;
     length_of_cipher *= 6;
-    int cipher_int[length_of_cipher];
-    int* plain_int_bacon = char_str_to_bacon_int_str(plaintext);
+    //int* cipher_int[length_of_cipher];
+    unsigned int* plain_int_bacon = char_str_to_bacon_int_str((char*)plaintext);
     // if not overflow
-    if (length_of_plain <= length_of_cipher)
+    if (length_of_plain <= (length_of_cipher/6))
     {
         ciphertext = auto_change_case(ciphertext, plain_int_bacon);
         return 0; // need to change here
     }
     // if overflow
     else{
-
+        int loss_chars = length_of_plain - (int)(length_of_cipher/6);
+        ciphertext = auto_change_case(ciphertext, plain_int_bacon);
+        return loss_chars;
     }
-    
-    return -1000;
 }
 
-int decrypt(const char *ciphertext, char *plaintext) {
-     return -1000;
-}
+// int decrypt(const char *ciphertext, char *plaintext) {
+//      return -1000;
+// }
