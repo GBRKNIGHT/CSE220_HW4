@@ -149,7 +149,7 @@ char get_c(const char* hash){
     }
 
     // invalid error
-    exit('\n');
+    return('\n');
 }
 
 
@@ -175,22 +175,23 @@ int encrypt(const char *plaintext, char *ciphertext) {
 
     actual_len = actual_len / 6 - 1;
 
-    
-
+    // MIN of the two
     if (actual_len > plain_len){
         actual_len = plain_len;
     }
 
+    // allocate space to store the codes
     char* codes = (char*) malloc((actual_len+1)*6 + 1);
     memset(codes, '\0', (actual_len+1)*6 + 1);
     char* pointer = codes;
 
-    // codes
+    // get the codes
     for(int i = 0; i < actual_len; i++){
         char c = plaintext[i];
         strncpy(pointer, get_bacon(c), 6);
         pointer += 6;
     }
+
     // add EOM
     strncpy(pointer, table[53], 6);
 
@@ -203,21 +204,21 @@ int encrypt(const char *plaintext, char *ciphertext) {
         char c = ciphertext[i];
         if (c>= 97 && c<= 122){
             // lower ciphertext
-            if(codes[count] == 'B'){
+            if(codes[count] == 'B'){ // if the code is B 1
                 ciphertext[i] -= 32; // to upper 
             }
             count++;
         }
         else if(c >=65 && c<= 90){
             // upper ciphertext
-            if(codes[count] == 'A'){
+            if(codes[count] == 'A'){ // if the code is A 0
                 ciphertext[i] += 32; // to lower
             }
             count++;
         }
     }
 
-    
+    // free the memory
     free(codes);
     return actual_len;
 }
@@ -276,6 +277,11 @@ int decrypt(const char *ciphertext, char *plaintext) {
     if (count == 0){
         free(cipher_arr);
         return -1;
+    }
+
+    if (strncmp(table[53], temp_holder, 6) != 0){
+        free(cipher_arr);
+        return -2;
     }
 
     plaintext[count] = '\0'; // null terminator
