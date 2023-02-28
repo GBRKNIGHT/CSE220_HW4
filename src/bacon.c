@@ -142,11 +142,14 @@ int upper_to_lower(char* input_char_str){
 }
 
 //change a char string to int str
-//NEED TO CHANGE UPPER TO LOWER
 unsigned int* char_str_to_bacon_int_str(char* input_char_str){
     upper_to_lower(input_char_str);
     int length_char_str = strlen(input_char_str);
-    unsigned int *int_str_binary [6 * (length_char_str)];
+    unsigned int *int_str_binary [6 * ((length_char_str)+1)];
+    int start_end_message = (6*length_char_str);
+    for(int i = 0; i < 6; i ++){
+        *int_str_binary[start_end_message + i] = (unsigned int) 1;
+    }
     // data fields to get binary
     unsigned int dividend = 0;
     // unsigned int divisor = 2;
@@ -227,6 +230,8 @@ int count_unusable_char(char* char_string){
 }
 
 
+
+
 int encrypt(const char *plaintext, char *ciphertext) {
     int length_of_cipher = strlen(ciphertext);
     int unusable_chars = count_unusable_char(ciphertext);
@@ -236,7 +241,7 @@ int encrypt(const char *plaintext, char *ciphertext) {
     //int* cipher_int[length_of_cipher];
     unsigned int* plain_int_bacon = char_str_to_bacon_int_str((char*)plaintext);
     // if not overflow
-    if (length_of_plain <= (length_of_cipher/6))
+    if (length_of_plain <= (length_of_cipher/6) + 1)
     {
         ciphertext = auto_change_case(ciphertext, plain_int_bacon);
         return 0; // need to change here
@@ -272,11 +277,36 @@ int* read_cipher_text(char *cipher_text){
     return *int_deleted;
 }
 
+char* get_last_six(char* cipher){
+    int length_original = strlen(cipher);
+    char* test_six_char[6];
+    for(int i = 0; i = 6; i++){
+        test_six_char[i] = cipher[length_original - i];
+    }
+    return test_six_char;
+}
 
+
+// return 1 if it is an error message
+// return 0 if not.
+//return -999 if not expected length
+int is_end_message(char* prob_end_message){
+    if(strlen(prob_end_message) != 6){
+        return -999;
+    }
+}
 
 int decrypt(const char *ciphertext, char *plaintext) {
+    int successful_decrypts = 0;
+    if (strlen(plaintext) == 0)
+    {
+        return -1;
+    }
+    
+    
     int* cipher_int = read_cipher_text((char*)ciphertext);
     int cipher_length = strlen(ciphertext) - count_unusable_char((char*)ciphertext);
+    
     int not_six = cipher_length % 6;
     cipher_length -= not_six;
     int result_counter = 0;
