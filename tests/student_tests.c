@@ -86,7 +86,7 @@ Test(student_suite, encrypt_digits, .description="Encrypt digits.") {
     cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
 }
 
-Test(student_suite, decrypt_digits, .description="Decrypt symbol.") {
+Test(student_suite, decrypt_digits, .description="Decrypt digits.") {
     char plaintext_act[] = "********************************";
     for (unsigned int i = 0; i < strlen(plaintext_act); i++)
         plaintext_act[i] = (char)(rand() % 200 + 33);
