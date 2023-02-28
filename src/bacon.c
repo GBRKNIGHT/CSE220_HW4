@@ -28,6 +28,7 @@ char* table[] = {
     "BAAAAB", // ' 33
     "BAAABA", // ( 34
     "BAAABB", // ) 35
+    
     "BAABAA", // , 36
     "BAABAB", // - 37
     "BAABBA", // . 38

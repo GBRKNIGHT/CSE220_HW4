@@ -44,13 +44,57 @@ Test(student_suite, decrypt_three_error, .description="Invalid code. Error -3.")
     cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
 }
 
-Test(base_suite, encrypt_one_error, .description="Insufficient memory for EOM. Error -1") {
+Test(student_suite, encrypt_one_error, .description="Insufficient memory for EOM. Error -1") {
     char ciphertext_act[] = "Too oo2022";
     char *plaintext = "Stony Brook University";
     int count_act = encrypt(plaintext, ciphertext_act);
     //char *ciphertext_exp = "TOO SHOrt 2022";
     int count_exp = -1;
     //cr_expect_str_eq(ciphertext_act, ciphertext_exp, "ciphertext was:          %s\nbut it should have been: %s", ciphertext_act, ciphertext_exp);
+    cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
+}
+
+Test(student_suite, encrypt_symbol, .description="Encrpyt all the symbols") {
+    char ciphertext_act[] = "TooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooToooo";
+    char *plaintext = " !\"#$%%&'(),-,/:;?";
+    int count_act = encrypt(plaintext, ciphertext_act);
+    char *ciphertext_exp = "tOOoOtoOOoTOoOOToooOTOoOoTOOOotOOOOToOOOTOOootooOotooOOtooOoToooOTOooOtoOooToOOotOooOtoOOOTOooOtOOooTOOOoTooOOTOOOoTooooTooooTooooTooooTooooTooooToooo";
+    int count_exp = 18;
+    cr_expect_str_eq(ciphertext_act, ciphertext_exp, "ciphertext was:          %s\nbut it should have been: %s", ciphertext_act, ciphertext_exp);
+    cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
+}
+
+Test(student_suite, decrypt_symbol, .description="Decrypt symbol.") {
+    char plaintext_act[] = "********************************";
+    for (unsigned int i = 0; i < strlen(plaintext_act); i++)
+        plaintext_act[i] = (char)(rand() % 200 + 33);
+    char *ciphertext = "tOOoOtoOOoTOoOOToooOTOoOoTOOOotOOOOToOOOTOOootooOotooOOtooOoToooOTOooOtoOooToOOotOooOtoOOOTOooOtOOooTOOOoTooOOTOOOoTooooTooooTooooTooooTooooTooooToooo";
+    int count_act = decrypt(ciphertext, plaintext_act);  
+    char *plaintext_exp = " !\"#$%%&'(),-,/:;?";
+    int count_exp = 18;
+    cr_expect_str_eq(plaintext_act, plaintext_exp, "plaintext was:           %s\nbut it should have been: %s", plaintext_act, plaintext_exp);
+    cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
+}
+
+Test(student_suite, encrypt_digits, .description="Encrypt digits.") {
+    char ciphertext_act[] = "TooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooToooo";
+    char *plaintext = "0123456789";
+    int count_act = encrypt(plaintext, ciphertext_act);
+    char *ciphertext_exp = "ToOootOoOotOOoOtOoOoToOOOtOOooToOOoTOoOOToOoOTOOOOtoooOToooOTOOOOTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooToooo";
+    int count_exp = 10;
+    cr_expect_str_eq(ciphertext_act, ciphertext_exp, "ciphertext was:          %s\nbut it should have been: %s", ciphertext_act, ciphertext_exp);
+    cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
+}
+
+Test(student_suite, decrypt_digits, .description="Decrypt symbol.") {
+    char plaintext_act[] = "********************************";
+    for (unsigned int i = 0; i < strlen(plaintext_act); i++)
+        plaintext_act[i] = (char)(rand() % 200 + 33);
+    char *ciphertext = "ToOootOoOotOOoOtOoOoToOOOtOOooToOOoTOoOOToOoOTOOOOtoooOToooOTOOOOTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooTooooToooo";
+    int count_act = decrypt(ciphertext, plaintext_act);  
+    char *plaintext_exp = "0123456789";
+    int count_exp = 10;
+    cr_expect_str_eq(plaintext_act, plaintext_exp, "plaintext was:           %s\nbut it should have been: %s", plaintext_act, plaintext_exp);
     cr_expect_eq(count_act, count_exp, "Return value was %d, but it should have been %d.\n", count_act, count_exp);
 }
 
