@@ -1,3 +1,14 @@
+
+
+/**
+ * Name: Yichen Li
+ * SBU_ID: 112946979
+ * CSE_220_R01
+ * 
+*/
+
+
+
 #include "bacon.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +18,7 @@
 // Add other #includes here if you> want.
 // Planing to use a hashtable to transform chars to a unsigned int. 
 
-// hashtable
+// hashtable, use 'A' or 'B' to distinguish. 
 char* table[] = {
     // A-Z 0-25
     "AAAAAA", "AAAAAB", "AAAABA", "AAAABB", "AAABAA",
@@ -57,6 +68,8 @@ char* table[] = {
     "BBBBBB" // EOM
 };
 
+
+//function to get the bacon code of a char
 char* get_bacon(const char c){
     // lowercase
     if (c >= 97 && c <= 122){
@@ -99,6 +112,7 @@ char* get_bacon(const char c){
     return table[53];
 }
 
+//reverse method of the method above. 
 char get_c(const char* hash){
     // letters
     for (int i = 0; i < 26; i++){
@@ -149,7 +163,7 @@ char get_c(const char* hash){
         return '\1';
     }
 
-    // invalid error
+    // invalid error, self-defined (use "\n")
     return('\n');
 }
 
@@ -249,6 +263,7 @@ int decrypt(const char *ciphertext, char *plaintext) {
     char* pointer = cipher_arr;
     for (int i = 0; i < plain_len; i++){
         if (count > actual_plain_len){
+            // free the memory
             free(cipher_arr);
             return -2;
         }
@@ -260,6 +275,7 @@ int decrypt(const char *ciphertext, char *plaintext) {
         
         // \n for -3 invalid code error
         if (temp_c == '\n'){
+            // free the memory
             free(cipher_arr);
             return -3;
         }
@@ -274,18 +290,19 @@ int decrypt(const char *ciphertext, char *plaintext) {
         count++;
         pointer += 6;
     }
-
+    // -1 error meg
     if (count == 0){
+        // free the memory
         free(cipher_arr);
         return -1;
     }
-
+    // -2 error msg 
     if (strncmp(table[53], temp_holder, 6) != 0){
         free(cipher_arr);
         return -2;
     }
 
-    plaintext[count] = '\0'; // null terminator
+    plaintext[count] = '\0'; // null terminator, defined in function 
     free(cipher_arr);
     return count;
 }
